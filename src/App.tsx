@@ -1,26 +1,105 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FC, useState } from "react";
+import InputBox from "../src/components/InputBox";
+import Button from "../src/components/Button";
+import CardList from "../src/components/CardList";
+import { Todo } from "../src/interfaces/TodoInterface";
+import "./App.scss";
 
-function App() {
+const App: FC = () => {
+  const [inputVal, setinputVal] = useState<string>("");
+  const [cardList, setCardList] = useState<Todo[]>([]);
+
+  const addTodo = () => {
+    if (inputVal.length > 0) {
+      const todoObj = {
+        id: Date.now(),
+        text: inputVal,
+        isDone: false,
+        isEdit: false,
+      };
+      setCardList([...cardList, todoObj]);
+      setinputVal("");
+    }
+  };
+
+  const onClose = (todoItem: Todo) => {
+    let updatedCardList = cardList.filter((item) => item.id !== todoItem.id);
+    setCardList(updatedCardList);
+  };
+
+  const onEdit = (todoItem: Todo) => {
+    let updatedCardList = cardList.map((item) => {
+      if (item.id === todoItem.id) {
+        return { ...item, isEdit: true };
+      } else {
+        return item;
+      }
+    });
+    setCardList(updatedCardList);
+  };
+
+  const onUndo = (todoItem: Todo) => {
+    let updatedCardList = cardList.map((item) => {
+      if (item.id === todoItem.id) {
+        return { ...item, isDone: false };
+      } else {
+        return item;
+      }
+    });
+
+    setCardList(updatedCardList);
+  };
+
+  const onDone = (todoItem: Todo) => {
+    let updatedCardList = cardList.map((item) => {
+      if (item.id === todoItem.id) {
+        return { ...item, isDone: true };
+      } else {
+        return item;
+      }
+    });
+    setCardList(updatedCardList);
+  };
+
+  const onEditText = (event: any, todoItem: Todo) => {
+    // let key = event.keyCode;
+    if (event.key === "Enter") {
+      let updatedCardList = cardList.map((item) => {
+        if (item.id === todoItem.id) {
+          return { ...item, isEdit: false, text: event.target.value };
+        } else {
+          return item;
+        }
+      });
+      setCardList(updatedCardList);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="todo">
+      <div className="todo__container">
+        <h1 className="">Todo App (ReactJs Typescript)</h1>
+        <div className="">
+          <InputBox
+            className=""
+            val={inputVal}
+            onAddTodo={(val) => setinputVal(val)}
+          />
+          <Button onAddTodo={addTodo} />
+        </div>
+        <div className="">
+          <CardList
+            list={cardList}
+            onClose={onClose}
+            onEdit={onEdit}
+            onUndo={onUndo}
+            onDone={onDone}
+            onEditText={onEditText}
+          />
+        </div>
+      </div>
     </div>
   );
-}
+};
 
 export default App;

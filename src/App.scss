@@ -1,0 +1,12 @@
+.todo {
+  padding: 30px;
+  background-color: #fffaf0;
+  height: 100vh;
+  &__container {
+    max-width: 1180px;
+    margin: 0 auto;
+    h1 {
+      text-align: center;
+    }
+  }
+}
